@@ -1,0 +1,14 @@
+fastapi
+uvicorn
+robin_stocks
+pandas-ta
+openai
+python-dotenv
+pydantic
+sqlmodel
+httpx
+python-telegram-bot
+beautifulsoup4
+lxml
+pandas
+pytest
