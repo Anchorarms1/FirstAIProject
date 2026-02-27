@@ -1,6 +1,6 @@
 import os
 from sqlmodel import Session, select
-from backend.app.models.trade import Trade, Portfolio
+from .trade import Trade, Portfolio
 from datetime import datetime
 
 class TradingEngine:

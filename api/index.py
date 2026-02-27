@@ -1,12 +1,12 @@
 from fastapi import FastAPI, Depends
 from sqlmodel import Session, select
-from api.app.models.trade import get_session, create_db_and_tables, Trade, Portfolio
-from api.app.services.market_data import MarketDataService
-from api.app.services.technical_analysis import TechnicalAnalysisService
-from api.app.services.news_gatherer import NewsGathererService
-from api.app.services.ai_engine import AIEngineService
-from api.app.services.trading_engine import TradingEngine
-from api.app.services.telegram_service import TelegramService
+from .app.models.trade import get_session, create_db_and_tables, Trade, Portfolio
+from .app.services.market_data import MarketDataService
+from .app.services.technical_analysis import TechnicalAnalysisService
+from .app.services.news_gatherer import NewsGathererService
+from .app.services.ai_engine import AIEngineService
+from .app.services.trading_engine import TradingEngine
+from .app.services.telegram_service import TelegramService
 
 app = FastAPI()
 
