@@ -1,9 +1,6 @@
 import os
 import json
 from openai import OpenAI
-from dotenv import load_dotenv
-
-load_dotenv()
 
 class AIEngineService:
     def __init__(self):
@@ -28,39 +25,31 @@ class AIEngineService:
             }
 
         prompt = f"""
-        Analyze the following data for {symbol} and provide a trading recommendation.
-        Mode: {mode} (intraday_swing or long_term)
+        Analyze {symbol} ({mode}).
+        Technical Indicators: {json.dumps(technical_data)}
+        News: {json.dumps(news_data)}
 
-        Technical Indicators:
-        {json.dumps(technical_data, indent=2)}
-
-        Latest News:
-        {json.dumps(news_data, indent=2)}
-
-        Provide your response in JSON format with the following keys:
-        - recommendation: "BUY", "SELL", or "HOLD"
-        - confidence_threshold: 0.0 to 1.0
-        - reasoning: Short explanation of your decision
-        - suggested_action: "Buy Call", "Buy Put", "Sell Position", or "None"
-        - risk_assessment: Low, Medium, High
+        Respond with a JSON object containing:
+        - recommendation (BUY/SELL/HOLD)
+        - confidence_threshold (0-1)
+        - reasoning
+        - suggested_action
+        - risk_assessment
         """
 
         try:
+            # Use a simpler prompt/call structure
             response = self.client.chat.completions.create(
                 model=self.model,
-                messages=[
-                    {"role": "system", "content": "You are an expert financial analyst and professional day trader."},
-                    {"role": "user", "content": prompt}
-                ],
-                response_format={"type": "json_object"}
+                messages=[{"role": "user", "content": prompt}],
+                # Removed response_format to ensure compatibility with all models
             )
-            return json.loads(response.choices[0].message.content)
+            content = response.choices[0].message.content
+            # Basic JSON extraction if model wraps it in markdown
+            if "```json" in content:
+                content = content.split("```json")[1].split("```")[0]
+            elif "```" in content:
+                content = content.split("```")[1].split("```")[0]
+            return json.loads(content)
         except Exception as e:
-            print(f"AI Engine Error: {e}")
-            return {
-                "recommendation": "HOLD",
-                "confidence_threshold": 0.0,
-                "reasoning": f"Error in AI processing: {str(e)}",
-                "suggested_action": "None",
-                "risk_assessment": "Unknown"
-            }
+            return {"recommendation": "HOLD", "confidence_threshold": 0, "reasoning": str(e)}
