@@ -1,12 +1,12 @@
 from fastapi import FastAPI, Depends
 from sqlmodel import Session, select
-from backend.app.models.trade import get_session, create_db_and_tables, Trade, Portfolio
-from backend.app.services.market_data import MarketDataService
-from backend.app.services.technical_analysis import TechnicalAnalysisService
-from backend.app.services.news_gatherer import NewsGathererService
-from backend.app.services.ai_engine import AIEngineService
-from backend.app.services.trading_engine import TradingEngine
-from backend.app.services.telegram_service import TelegramService
+from api.app.models.trade import get_session, create_db_and_tables, Trade, Portfolio
+from api.app.services.market_data import MarketDataService
+from api.app.services.technical_analysis import TechnicalAnalysisService
+from api.app.services.news_gatherer import NewsGathererService
+from api.app.services.ai_engine import AIEngineService
+from api.app.services.trading_engine import TradingEngine
+from api.app.services.telegram_service import TelegramService
 
 app = FastAPI()
 
@@ -32,6 +32,7 @@ def get_trades(session: Session = Depends(get_session)):
 
 async def run_analysis_and_trade(symbol: str, mode: str, session: Session):
     hist_data = market_data_service.get_historical_data(symbol)
+    if not hist_data: return
     df = ta_service.calculate_indicators(hist_data)
     signals = ta_service.get_latest_signals(df)
     news = await news_service.get_company_news(symbol)
